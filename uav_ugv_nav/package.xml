@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>uav_ugv_nav</name>
+  <version>0.1.0</version>
+  <description>
+    Coordinate teams of Crazyflie UAVs and TurtleBot 4 UGVs in a motion-capture arena:
+    each UGV carries its UAV between release and collect points while the UAV flies
+    its tours, following a plan given as a mission file.
+  </description>
+  <maintainer email="er.c@northeastern.edu">Cahit Ikbal Er</maintainer>
+  <license>MIT</license>
+
+  <url type="repository">https://github.com/cahiter/multi-uav-ugv-planning</url>
+
+  <author>Cahit Ikbal Er</author>
+  <author>Amin Kashiri</author>
+
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_srvs</exec_depend>
+  <!-- cflib (Crazyflie Python library) is not packaged for rosdep: pip install cflib -->
+
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

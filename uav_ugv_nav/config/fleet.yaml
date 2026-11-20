@@ -1,0 +1,31 @@
+# The robots of each team and the arena they share: everything lab-specific.
+# Team names must match the team names in the mission file.
+#
+# Our setup: two Crazyflie 2.1, each on its own Crazyradio on its own channel,
+# and two TurtleBot 4 in the ROS namespaces /ugv1 and /ugv2. MoCap topics are
+# the PoseStamped topics of the OptiTrack rigid bodies.
+
+# Safe box in the MoCap world frame [m]. Every mission point must lie inside;
+# mission.launch.py refuses to start otherwise. Set it to your own arena.
+arena:
+  x: [-4.5, 0.6]
+  y: [0.1, 4.6]
+  z: [0.0, 1.5]
+
+teams:
+  team1:
+    uav:
+      name: cf1                            # namespace of its uav_node
+      uri: radio://0/80/2M/E7E7E7E7E7      # Crazyradio 0, channel 80
+      mocap_topic: /Robot_3/pose
+    ugv:
+      name: ugv1                           # TurtleBot 4 namespace
+      mocap_topic: /Robot_1/pose
+  team2:
+    uav:
+      name: cf2
+      uri: radio://1/100/2M/E7E7E7E7E8     # Crazyradio 1, channel 100
+      mocap_topic: /Robot_4/pose
+    ugv:
+      name: ugv2
+      mocap_topic: /Robot_2/pose

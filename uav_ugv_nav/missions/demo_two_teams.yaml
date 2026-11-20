@@ -1,0 +1,48 @@
+# Demo mission: two UAV-UGV teams working opposite halves of the arena, their
+# UGVs driving in opposite directions. A hand-made example, not an optimized
+# plan; any planner can produce this format (see docs/mission_format.md).
+# Coordinates are in the MoCap world frame (meters, z up) and fit the arena box
+# in config/fleet.yaml. Adapt them to your arena, then run
+#   ros2 run uav_ugv_nav check_mission <this file> --fleet <your fleet.yaml>
+
+# Timing model and flight-time budget. The UAV flies with exactly these
+# durations, and check_mission uses them to estimate each tour.
+model:
+  max_flight_time: 90.0   # flight-time budget per tour [s]
+  min_air_slack: 20.0     # each tour's flight must leave at least this much budget unused [s]
+  min_ground_slack: 20.0  # same for the UGV's release->collect drive [s]
+  flight_altitude: 0.8    # altitude of waypoints given as [x, y] [m]
+  uav_speed: 0.3          # UAV speed between waypoints [m/s]
+  min_leg_time: 2.0       # shortest single UAV move [s]
+  hover_time: 3.0         # hover at each waypoint, e.g. to take a picture [s]
+  takeoff_time: 3.0       # [s]
+  settle_time: 2.0        # align above the UGV before descending [s]
+  land_time: 4.0          # [s]
+  ugv_speed: 0.12         # average UGV speed including turns [m/s]
+  recharge_time: 0.0      # minimum time on the deck between tours [s]
+
+teams:
+  team1:                  # west half, driving north: three short tours
+    start: [-3.6, 0.5]    # where the UGV starts, with the UAV on its deck
+    end: [-3.8, 4.1]      # where the UGV parks after the last tour
+    tours:
+      - release: [-3.5, 1.1]
+        waypoints: [[-4.0, 0.9], [-2.7, 1.6]]
+        collect: [-3.3, 1.8]
+      - release: [-3.3, 2.3]
+        waypoints: [[-2.7, 2.4], [-3.3, 2.7, 1.1], [-3.9, 2.9]]  # [x, y, z] sets the altitude
+        collect: [-3.3, 3.0]
+      - release: [-3.2, 3.4]
+        waypoints: [[-3.9, 3.6], [-2.8, 4.2]]
+        collect: [-3.3, 4.0]
+
+  team2:                  # east half, driving south: two longer tours
+    start: [-1.0, 4.0]
+    end: [-1.6, 0.5]
+    tours:
+      - release: [-1.0, 3.3]
+        waypoints: [[-1.7, 3.1], [-0.3, 3.3], [-1.7, 2.8], [-0.3, 2.6]]
+        collect: [-1.2, 2.7]
+      - release: [-1.0, 2.0]
+        waypoints: [[-0.3, 1.6], [-1.7, 1.2], [-0.6, 0.9]]
+        collect: [-1.0, 0.7]

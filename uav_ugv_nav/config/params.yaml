@@ -1,0 +1,90 @@
+# Tuning of the UAV and UGV nodes. mission.launch.py loads this file for every
+# team; the robot-specific values (names, radio URIs, MoCap topics) come from
+# fleet.yaml and the plan from the mission file.
+#
+# Values are those of our setup: Crazyflie 2.1 on a TurtleBot 4 deck, OptiTrack.
+
+/**/uav_node:
+  ros__parameters:
+    # Height of the Crazyflie (its MoCap z) when it sits on the UGV deck [m].
+    # Measure it: put the Crazyflie on the deck and read z from its MoCap topic.
+    deck_height: 0.39
+    # Refuse to take off below this battery voltage (motors off) [V].
+    min_takeoff_voltage: 3.8
+    # Hard safety limit: land where it is after this long in the air [s]. Keep it
+    # below the real endurance (a Crazyflie 2.1 flies ~5 min). The mission's
+    # max_flight_time is the planning budget and only produces warnings.
+    max_airborne_time: 240.0
+    # Land where it is if no MoCap pose arrives for this long while flying [s]. Short
+    # occlusions are normal (e.g. low above the deck); the Kalman filter coasts through them.
+    mocap_timeout: 1.0
+    # Duration of an emergency landing [s].
+    emergency_land_time: 3.0
+    # Pre-flight check: after the first Kalman filter reset wait settle_time, then
+    # require the estimate to stay within max_error of MoCap for check_time.
+    estimator_settle_time: 5.0
+    estimator_check_time: 3.0
+    estimator_max_error: 0.05
+    # Rate at which MoCap positions are forwarded to the Crazyflie [Hz].
+    mocap_send_rate: 100.0
+    # Pause between tours in standalone mode [s].
+    standalone_pause: 5.0
+    # Where cflib caches the Crazyflie's parameter/log tables (faster connects).
+    cf_cache_dir: ~/.cache/uav_ugv_nav
+
+/**/ugv_node:
+  ros__parameters:
+    # Go-to-goal P controller on the MoCap pose.
+    max_linear_speed: 0.2        # [m/s]
+    max_angular_speed: 1.0       # [rad/s]
+    k_linear: 0.7                # speed gain on the distance to the goal
+    k_angular: 1.8               # turn-rate gain on the heading error
+    goal_tolerance: 0.08         # a point counts as reached within this distance [m]
+    mocap_timeout: 0.25          # stop if the MoCap pose is older than this [s]
+    start_tolerance: 0.3         # warn if the UGV starts this far from the mission start [m]
+
+    # Before takeoff and landing the UGV turns in place to a fixed heading. With
+    # position-only MoCap the Crazyflie's Kalman filter assumes it starts facing
+    # world +x, so keep the Crazyflie on the deck facing the UGV's front and park
+    # at align_yaw_deg: 0.0.
+    align_yaw: true
+    align_yaw_deg: 0.0
+    align_tolerance_deg: 7.0
+    align_gain: 1.8
+    align_max_speed: 0.8         # [rad/s]
+    align_timeout: 4.0           # give up aligning after this long and continue [s]
+
+    # LiDAR. On a TurtleBot 4 (standard and lite) the scan frame rplidar_link is
+    # yawed +90 deg from base_link. Check it with scan_check before driving.
+    lidar_yaw_offset_deg: 90.0
+    lidar_min_range: 0.15        # ignore returns closer than this: the robot itself [m]
+    require_scan: true           # hold still while no LiDAR scan arrives
+    scan_timeout: 1.0            # a scan older than this counts as missing [s]
+
+    # APF + vortex avoidance on top of the P controller. Keep apf_gain small
+    # (0.03-0.08): larger values make the robot oscillate.
+    apf_enabled: true
+    apf_influence: 0.8           # obstacles closer than this push the robot [m]
+    apf_gain: 0.05               # strength of the push
+    apf_vortex: 0.2              # sideways push to curve around (raise if it stops head-on)
+    apf_sectors: 72              # downsample the scan to about this many rays
+    robot_influence: 0.8         # other UGVs (from MoCap) closer than this push [m]
+    robot_gain: 0.1
+    robot_vortex: 0.2
+    robot_mask_arc_deg: 15.0     # ignore LiDAR returns this close to another UGV's bearing...
+    robot_mask_tolerance: 0.4    # ...and range [m]: MoCap already accounts for that robot
+
+    # Emergency stop, the last resort.
+    stop_distance: 0.25          # obstacle closer than this within stop_arc_deg ahead [m]
+    stop_arc_deg: 60.0           # full width of the forward arc
+    robot_stop_distance: 0.35    # another UGV closer than this ahead [m]
+
+    # Escape APF local minima by turning in place.
+    stuck_speed: 0.02            # [m/s]
+    stuck_time: 2.0              # [s]
+    recovery_turn_speed: 0.5     # [rad/s]
+
+    # Coordination with the UAV.
+    takeoff_timeout: 60.0        # abort if the UAV is not airborne this long after asking [s]
+    land_timeout: 300.0          # abort if the UAV has not landed this long after asking [s]
+    standalone_pause: 2.0        # stop at release/collect points in standalone mode [s]

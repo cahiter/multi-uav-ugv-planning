@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the paper below."
+title: "Multi-UAV-UGV Planning: running planned missions with Crazyflie and TurtleBot 4 teams"
+type: software
+authors:
+  - family-names: Er
+    given-names: Cahit Ikbal
+  - family-names: Kashiri
+    given-names: Amin
+  - family-names: Yazıcıoğlu
+    given-names: Yasin
+repository-code: "https://github.com/cahiter/multi-uav-ugv-planning"
+license: MIT
+preferred-citation:
+  type: article
+  title: "RSPECT: Robust and Scalable Planner for Energy-Aware Coordination of UAV-UGV Teams in Aerial Monitoring"
+  authors:
+    - family-names: Er
+      given-names: Cahit Ikbal
+    - family-names: Kashiri
+      given-names: Amin
+    - family-names: Yazıcıoğlu
+      given-names: Yasin
+  journal: "Journal of Intelligent & Robotic Systems"
+  volume: 112
+  year: 2026
+  doi: "10.1007/s10846-026-02426-5"
