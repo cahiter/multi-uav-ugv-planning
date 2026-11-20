@@ -12,7 +12,7 @@ provides localization for every robot.
 *Two teams in our arena during the RSPECT experiments (2× speed).*
 
 This is the lab setup behind the experiments in
-[RSPECT (Er, Kashiri, Yazıcıoğlu, JIRS 2026)](https://doi.org/10.1007/s10846-026-02426-5),
+[RSPECT (Er, Kashiri, Yazıcıoğlu, JINT 2026)](https://doi.org/10.1007/s10846-026-02426-5),
 released as a starting point for other researchers. It is **not** the RSPECT planner and does not
 reproduce the paper's experiments: it executes whatever plan you give it, so you can plug in your
 own planner.
